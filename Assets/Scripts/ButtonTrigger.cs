@@ -15,8 +15,8 @@ public class ButtonTrigger : MonoBehaviour
     {
         if (triggered) return;
         targetObject.activate();
-        GetComponent<MeshRenderer>().material = materials[bounceTimes];
-        anotherButtonComp.GetComponent<MeshRenderer>().material = materials[bounceTimes];
+        if(materials.Length != 0) GetComponent<MeshRenderer>().material = materials[bounceTimes];
+        if(materials.Length != 0) anotherButtonComp.GetComponent<MeshRenderer>().material = materials[bounceTimes];
         triggered = true;
     }
 }
