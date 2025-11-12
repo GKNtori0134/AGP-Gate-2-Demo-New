@@ -8,7 +8,7 @@ public class _AutoDoor : TargetObject
 
     private void Update()
     {
-        if (isOpening) transform.position += new Vector3(0,10*Time.deltaTime,0);
+        if (isOpening) transform.position += new Vector3(0,3*Time.deltaTime,0);
     }
 
     public override void activate()
