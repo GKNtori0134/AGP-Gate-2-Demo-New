@@ -487,43 +487,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 17.171083
+      value: 17.170942
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.5
+      value: -5.499938
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 7.4777713
+      value: 7.4821763
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9999871
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.0048046145
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.0016671766
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: -0.00018001812
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -0.551
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 0.191
       objectReference: {fileID: 0}
     - target: {fileID: 4597797110490962, guid: b26e035715d763f409a7e837ae204dab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -0.022
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12952,6 +12952,7 @@ MonoBehaviour:
   followSpeed: 8
   positionFollowSpeed: 5
   positionOffset: {x: 0.3, y: -0.05, z: 0.5}
+  extraShootAngle: 20
 --- !u!1001 &369795511
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26162,6 +26163,9 @@ MonoBehaviour:
   anotherButtonComp: {fileID: 0}
   materials: []
   bounceTimes: 1
+  hitVFX: {fileID: 0}
+  destroyAfterHit: 0
+  vfxScale: {x: 1, y: 1, z: 1}
 --- !u!4 &671388035 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4031182875174824, guid: 6bc57363a7190634cb5f15eb8dbf29b1, type: 3}
@@ -49661,6 +49665,9 @@ MonoBehaviour:
   anotherButtonComp: {fileID: 0}
   materials: []
   bounceTimes: 2
+  hitVFX: {fileID: 416251089823111746, guid: 240c830bfe588ad4f9925288b65d7a18, type: 3}
+  destroyAfterHit: 1
+  vfxScale: {x: 2, y: 2, z: 2}
 --- !u!1001 &1375028248
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -56171,7 +56178,7 @@ MonoBehaviour:
   previewPoints: 1000
   timeStep: 0.05
   tipArrowLength: 0.5
-  tipMaterial: {fileID: 2100000, guid: a2c688a2543ab89439cd2ad712b0f33d, type: 2}
+  tipMaterial: {fileID: 0}
   tipWidth: 0.05
   bounceForce: 5
   bounceMultiplier: 1
@@ -70657,6 +70664,9 @@ MonoBehaviour:
   anotherButtonComp: {fileID: 0}
   materials: []
   bounceTimes: 0
+  hitVFX: {fileID: 0}
+  destroyAfterHit: 0
+  vfxScale: {x: 1, y: 1, z: 1}
 --- !u!4 &1877819555 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4031182875174824, guid: 64e798ae1d90ecb4fbe61f53eb2b1a67, type: 3}
