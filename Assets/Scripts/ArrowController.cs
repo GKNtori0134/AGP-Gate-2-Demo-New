@@ -3,81 +3,120 @@ using UnityEngine;
 public class ArrowController : MonoBehaviour
 {
     private Rigidbody rb;
-    private bool hasHit = false; // Whether the arrow has hit something
+    private bool hasHit = false;
     public float bounceForce = 5f;
     public float bounceMultiplier = 1f;
     public int bounceTimes = 2;
+
+    private int initialBounceTimes;
     private CapsuleCollider CapsuleCollider;
     public TrailerSource TrailerSource;
 
     public AudioClip colli;
     public AudioClip hitting;
 
+    [Header("Bounce VFX")]
+    public GameObject[] bounceVFXList;
+    public float vfxLifetime = 2f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         CapsuleCollider = GetComponent<CapsuleCollider>();
+        initialBounceTimes = bounceTimes;
     }
 
     void Update()
     {
-        // The initial velocity direction of the arrow
-        if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.01f) // Only when the arrow's velocity is not 0, the arrow will move
-        {
+        if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.01f)
             transform.forward = rb.linearVelocity.normalized;
-        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        /*if (!hasHit)
+        // ----- BUTTON TRIGGER -----
+        if (collision.collider.CompareTag("Button"))
         {
-            hasHit = true;
-            rb.velocity = Vector3.zero; // Stop the arrow's movement
-            rb.isKinematic = true; // Make the arrow kinematic
-            transform.parent = collision.transform; // Make the arrow a child of the object it hit
-        }*/
+            ButtonTrigger bt = collision.collider.GetComponent<ButtonTrigger>();
 
-        if (collision.collider.CompareTag("Button") && bounceTimes == collision.collider.GetComponent<ButtonTrigger>().bounceTimes)
-        {
-            collision.collider.GetComponent<ButtonTrigger>().triggerTarget(); 
-            hasHit = true;
-            GetComponent<AudioSource>().clip = hitting;
-            GetComponent<AudioSource>().Play();
-            rb.isKinematic = true;
-            return;
+            // Bounce match ¡ú activate the button
+            if (bt != null && bounceTimes == bt.bounceTimes)
+            {
+                bt.triggerTarget();  // Activate logic
+
+                // Play VFX at hit pos
+                bt.PlayHitVFX(collision.contacts[0].point);
+
+                // Arrow stops
+                hasHit = true;
+                rb.isKinematic = true;
+
+                GetComponent<AudioSource>().clip = hitting;
+                GetComponent<AudioSource>().Play();
+
+                return;
+            }
         }
 
+        // ----- NORMAL BOUNCE -----
         if (bounceTimes > 0 && !hasHit)
         {
+            TrailerSource.changeColor(bounceTimes - 1);
 
-            TrailerSource.changeColor(bounceTimes-1);
-
-            // Get the normal of the collision
             Vector3 normal = collision.contacts[0].normal;
-
-            // Calculate the bounce direction
             Vector3 bounceDirection = Vector3.Reflect(rb.linearVelocity, normal);
-
-            // Apply the bounce force to the arrow
             bounceDirection += Vector3.up * bounceForce;
 
-            // Apply the new velocity
             rb.linearVelocity = bounceDirection * bounceMultiplier;
+
+            SpawnBounceVFX(collision.contacts[0].point);
 
             bounceTimes--;
 
             GetComponent<AudioSource>().clip = colli;
             GetComponent<AudioSource>().time = 0.2f;
             GetComponent<AudioSource>().Play();
-
-        } else
+        }
+        else
         {
-            //CapsuleCollider.enabled = false;
+            // ----- FINAL LANDING -----
+            SpawnFinalVFX(collision.contacts[0].point);
+
             rb.isKinematic = true;
+
             GetComponent<AudioSource>().clip = colli;
             GetComponent<AudioSource>().time = 0.2f;
             GetComponent<AudioSource>().Play();
+        }
+    }
+
+    // VFX for bounce #1, #2, #3...
+    void SpawnBounceVFX(Vector3 pos)
+    {
+        int index = initialBounceTimes - bounceTimes;
+
+        if (index >= 0 && index < bounceVFXList.Length)
+        {
+            GameObject prefab = bounceVFXList[index];
+            if (prefab == null) return;
+
+            GameObject vfx = Instantiate(prefab, pos, Quaternion.identity);
+            Destroy(vfx, vfxLifetime);
+        }
+    }
+
+    // Final VFX
+    void SpawnFinalVFX(Vector3 pos)
+    {
+        int index = bounceVFXList.Length - 1;
+
+        if (index >= 0 && index < bounceVFXList.Length)
+        {
+            GameObject prefab = bounceVFXList[index];
+            if (prefab == null) return;
+
+            GameObject vfx = Instantiate(prefab, pos, Quaternion.identity);
+            Destroy(vfx, vfxLifetime);
         }
     }
 }

@@ -13,22 +13,29 @@ public class ButtonTrigger : MonoBehaviour
     public Material[] materials;
     public int bounceTimes = 2;
 
+    [Header("Hit VFX")]
+    public GameObject hitVFX;           // VFX prefab to spawn when hit
+    public bool destroyAfterHit = false; // 是否在触发后销毁按钮本体
+
+    [Header("Hit VFX Settings")]
+    public Vector3 vfxScale = Vector3.one; // default scale = 1
+
+
     private bool triggered = false;
 
+    // Arrow will pass in its current bounceTimes
     public void triggerTarget()
     {
-        if (triggered) return; // 防止重复触发
+        if (triggered) return;
         triggered = true;
 
-        // ✅ 激活逻辑
+        // ---- Activate Targets ----
         if (targetObject != null)
         {
-            // 情况 1：使用单个 targetObject
             targetObject.activate();
         }
         else if (targetObjectsArray != null && targetObjectsArray.Length > 0)
         {
-            // 情况 2：单个为空时，使用数组
             foreach (TargetObject t in targetObjectsArray)
             {
                 if (t != null)
@@ -40,15 +47,33 @@ public class ButtonTrigger : MonoBehaviour
             Debug.LogWarning($"{name}: No target assigned to ButtonTrigger!");
         }
 
-        // ✅ 改变按钮材质视觉
-        if (materials.Length != 0)
+        // ---- Change Button Visual ----
+        if (materials.Length != 0 &&
+            bounceTimes >= 0 &&
+            bounceTimes < materials.Length)
         {
-            if (bounceTimes >= 0 && bounceTimes < materials.Length)
-            {
-                GetComponent<MeshRenderer>().material = materials[bounceTimes];
-                if (anotherButtonComp != null)
-                    anotherButtonComp.GetComponent<MeshRenderer>().material = materials[bounceTimes];
-            }
+            GetComponent<MeshRenderer>().material = materials[bounceTimes];
+
+            if (anotherButtonComp != null)
+                anotherButtonComp.GetComponent<MeshRenderer>().material = materials[bounceTimes];
         }
     }
+
+    // Called by ArrowController after triggerTarget()
+    public void PlayHitVFX(Vector3 hitPos)
+    {
+        if (hitVFX != null)
+        {
+            GameObject vfx = Instantiate(hitVFX, hitPos, Quaternion.identity);
+
+            // Apply scale from Inspector
+            vfx.transform.localScale = vfxScale;
+
+            Destroy(vfx, 2f);
+        }
+
+        if (destroyAfterHit)
+            Destroy(gameObject);
+    }
+
 }

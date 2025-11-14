@@ -2,20 +2,23 @@ using UnityEngine;
 
 public class BowController : MonoBehaviour
 {
-    public Transform playerCamera; // Player camera
-    public Transform arrowSpawnPoint; // Arrow spawn point
-    public GameObject arrowPrefab; // Arrow prefab
-    public float arrowSpeed = 10f; // Arrow speed
+    public Transform playerCamera;
+    public Transform arrowSpawnPoint;
+    public GameObject arrowPrefab;
+    public float arrowSpeed = 10f;
 
-    public float followSpeed = 5f; // Speed of following the player's rotation
-    public float positionFollowSpeed = 5f; // Speed of following the player's position
-    public Vector3 positionOffset = new Vector3(0.3f, -0.2f, 0.5f); // Position offset of the bow
+    public float followSpeed = 5f;
+    public float positionFollowSpeed = 5f;
+    public Vector3 positionOffset = new Vector3(0.3f, -0.2f, 0.5f);
+
+    [Header("Shooting Angle")]
+    public float extraShootAngle = 10f; // degrees upward
 
     void Update()
     {
         FollowPlayerView();
 
-        if (Input.GetMouseButtonDown(0)) // Shoot the arrow
+        if (Input.GetMouseButtonDown(0))
         {
             ShootArrow();
         }
@@ -23,12 +26,17 @@ public class BowController : MonoBehaviour
 
     void FollowPlayerView()
     {
-        // **Follow the player's view**
+        // Follow camera position
         Vector3 targetPosition = playerCamera.position + playerCamera.TransformDirection(positionOffset);
         transform.position = Vector3.Lerp(transform.position, targetPosition, positionFollowSpeed * Time.deltaTime);
 
-        // **Follow the player's rotation**
-        Quaternion targetRotation = Quaternion.LookRotation(playerCamera.forward);
+        // Apply fixed upward angle relative to camera
+        Vector3 forwardDir =
+            playerCamera.TransformDirection(
+                Quaternion.Euler(-extraShootAngle, 0, 0) * Vector3.forward
+            );
+
+        Quaternion targetRotation = Quaternion.LookRotation(forwardDir);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, followSpeed * Time.deltaTime);
     }
 

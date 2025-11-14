@@ -65,6 +65,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -129,6 +132,9 @@ TrailRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -250,6 +256,11 @@ MonoBehaviour:
   TrailerSource: {fileID: 2564553209505156449}
   colli: {fileID: 8300000, guid: fdc008f55ddd46b4e8cc20ec3569d46d, type: 3}
   hitting: {fileID: 8300000, guid: 1c58fc10992c80745a747948e7db6252, type: 3}
+  bounceVFXList:
+  - {fileID: 416251089823111746, guid: 240c830bfe588ad4f9925288b65d7a18, type: 3}
+  - {fileID: 7031711661290200971, guid: 9a10e7fa8b74dcb46829ad3dce4ef4da, type: 3}
+  - {fileID: 6678588679366763109, guid: 09c387cf0bd54034daad364798d579b4, type: 3}
+  vfxLifetime: 2
 --- !u!54 &6465967054043511572
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -287,7 +298,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: fdc008f55ddd46b4e8cc20ec3569d46d, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: fdc008f55ddd46b4e8cc20ec3569d46d, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
