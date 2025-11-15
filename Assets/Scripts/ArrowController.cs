@@ -19,6 +19,11 @@ public class ArrowController : MonoBehaviour
     public GameObject[] bounceVFXList;
     public float vfxLifetime = 2f;
 
+    // ---------------- ICE LOGIC ----------------
+    private bool onIce = false;
+    private IceSurface currentIce = null;
+    private Vector3 lastSlideVelocity;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -28,26 +33,57 @@ public class ArrowController : MonoBehaviour
 
     void Update()
     {
-        if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.01f)
+        // Arrow rotation while flying
+        if (!hasHit && rb.linearVelocity.sqrMagnitude > 0.01f && !onIce)
+        {
             transform.forward = rb.linearVelocity.normalized;
+        }
+
+        // ----- ICE SLIDING -----
+        if (onIce && currentIce != null)
+        {
+            Vector3 vel = rb.linearVelocity;
+
+            // Damp vertical so arrow stays on ice
+            vel.y *= currentIce.verticalDamping;
+
+            // Apply slippery friction
+            vel *= 1f - currentIce.slideFriction * Time.deltaTime;
+
+            rb.linearVelocity = vel;
+            lastSlideVelocity = vel;
+
+            // Arrow faces slide direction
+            if (vel.sqrMagnitude > 0.01f)
+                transform.forward = vel.normalized;
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        // ----- BUTTON TRIGGER -----
+        // ===== ICE SURFACE =====
+        IceSurface ice = collision.collider.GetComponent<IceSurface>();
+        if (ice != null && !hasHit)
+        {
+            onIce = true;
+            currentIce = ice;
+
+            // Lock Y velocity when landing on ice
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+            return;
+        }
+
+        // ===== BUTTON TRIGGER =====
         if (collision.collider.CompareTag("Button"))
         {
             ButtonTrigger bt = collision.collider.GetComponent<ButtonTrigger>();
 
-            // Bounce match ¡ú activate the button
             if (bt != null && bounceTimes == bt.bounceTimes)
             {
-                bt.triggerTarget();  // Activate logic
-
-                // Play VFX at hit pos
+                bt.triggerTarget();
                 bt.PlayHitVFX(collision.contacts[0].point);
 
-                // Arrow stops
                 hasHit = true;
                 rb.isKinematic = true;
 
@@ -58,7 +94,7 @@ public class ArrowController : MonoBehaviour
             }
         }
 
-        // ----- NORMAL BOUNCE -----
+        // ===== NORMAL BOUNCE =====
         if (bounceTimes > 0 && !hasHit)
         {
             TrailerSource.changeColor(bounceTimes - 1);
@@ -79,9 +115,8 @@ public class ArrowController : MonoBehaviour
         }
         else
         {
-            // ----- FINAL LANDING -----
+            // ===== FINAL LANDING =====
             SpawnFinalVFX(collision.contacts[0].point);
-
             rb.isKinematic = true;
 
             GetComponent<AudioSource>().clip = colli;
@@ -90,7 +125,23 @@ public class ArrowController : MonoBehaviour
         }
     }
 
-    // VFX for bounce #1, #2, #3...
+    void OnCollisionExit(Collision collision)
+    {
+        // ----- EXITING ICE -----
+        if (onIce && collision.collider.GetComponent<IceSurface>() != null)
+        {
+            if (currentIce != null)
+            {
+                rb.linearVelocity = lastSlideVelocity + Vector3.up * currentIce.exitBounceForce;
+            }
+
+            onIce = false;
+            currentIce = null;
+        }
+    }
+
+    // ---------------- VFX METHODS ----------------
+
     void SpawnBounceVFX(Vector3 pos)
     {
         int index = initialBounceTimes - bounceTimes;
@@ -105,7 +156,6 @@ public class ArrowController : MonoBehaviour
         }
     }
 
-    // Final VFX
     void SpawnFinalVFX(Vector3 pos)
     {
         int index = bounceVFXList.Length - 1;

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Button
   - Ground
+  - SlashCam
   layers:
   - Default
   - TransparentFX
@@ -16,9 +17,9 @@ TagManager:
   - Projectile
   - Player
   - EnvironmentalObjects
-  - 
-  - 
-  - 
+  - Suimono_Water
+  - Suimono_Depth
+  - Suimono_Screen
   - 
   - 
   - 
